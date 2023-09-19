@@ -6,11 +6,31 @@ import errorImage from '../error.png'
 const Disperse=(props) => {
 
     const [error,setError]=useState([]);
-    const [data,setData]=useState(props.data);
+    const [data,setData]=useState([]);
     const [combineBalance,setCombineBalance]=useState(false)
     const [flag,setFlag]=useState(false)
+    const [textValue,setTextValue]=useState('')
 
     const handleSubmit=() => {
+
+
+        // sanitizing data
+
+        const items=textValue.split(/[=, ,\n]+/);
+
+        const result=[];
+
+        // Iterate through the split items and store address and value pairs
+        for(let i=0;i<items.length;i+=2) {
+            if(items[i]!==undefined&&items[i+1]!==undefined) {
+                const address=items[i];
+                const value=items[i+1];
+                const string=address+" "+value
+                result.push(string);
+            }
+        }
+
+        const data=result
 
         const errorData=[]
         for(let i=0;i<data.length;i++) {
@@ -36,19 +56,30 @@ const Disperse=(props) => {
             for(let i=0;i<data.length;i++) {
                 const itemsArr=data[i].split(" ");
                 if(!map.has(itemsArr[0])) {
-                    map.set(itemsArr[0],i+1);
+                    map.set(itemsArr[0],[i+1]);
                 } else {
+
+                    map.set(itemsArr[0],[...map.get(itemsArr[0]),i+1]);
+
+                }
+            }
+
+            for(let [key,value] of map) {
+                if(value.length>1) {
                     let obj={
-                        item: data[i],
-                        index: i+1,
-                        error: `Address ${itemsArr[0]} encountered in Line: ${map.get(itemsArr[0])} , ${i+1}`
+                        item: key,
+                        index: value,
+                        error: `Address ${key} encountered in Line: ${map.get(key)}`
                     }
                     errorData.push(obj);
                 }
+
             }
 
             setError(errorData)
             setFlag(true);
+            setData(result)
+
         }
     }
 
@@ -65,6 +96,11 @@ const Disperse=(props) => {
             }
         }
         setData(arrData)
+        let ans="";
+        for(let i=0;i<arrData.length;i++) {
+            ans=ans+arrData[i]+"\n";
+        }
+        setTextValue(ans)
         setError([])
     }
 
@@ -88,8 +124,18 @@ const Disperse=(props) => {
         }
         setData(arrData)
         setCombineBalance(true);
+        let ans="";
+        for(let i=0;i<arrData.length;i++) {
+            ans=ans+arrData[i]+"\n";
+        }
+        setTextValue(ans)
         setError([])
 
+    }
+
+    const handleChange=(e) => {
+        const data=e.target.value;
+        setTextValue(data)
     }
     return (
         <>
@@ -97,15 +143,10 @@ const Disperse=(props) => {
             <div className="container">
                 <div className="heading-text">Address with Amounts</div>
                 <div className="main-div">
-                    <ul className="ul-data-list">
-                        {
-                            data.map((item,index) => {
 
-                                return <div style={{display: 'flex'}} key={index}><span style={{marginRight: '10px'}}>{index+1}</span><li key={index}> {item}</li></div>
-                            })
-                        }
+                    <textarea className="text-area" onChange={handleChange} value={textValue}>
 
-                    </ul>
+                    </textarea>
 
                 </div>
                 <div className="heading-text">Separated by ',' or '' or '='</div>
@@ -128,7 +169,7 @@ const Disperse=(props) => {
                                     {error.map((item,index) => {
                                         return (
                                             <>
-                                               <div key={index}>{item.error}</div><br />
+                                                <div key={index}>{item.error}</div><br />
                                             </>
                                         )
                                     }
