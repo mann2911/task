@@ -35,7 +35,7 @@ const Disperse=(props) => {
         const errorData=[]
         for(let i=0;i<data.length;i++) {
             const itemsArr=data[i].split(" ");
-            if(isNaN(itemsArr[1])) {
+            if(isNaN(itemsArr[1]) || itemsArr[1]<0) {
                 let obj={
                     item: data[i],
                     index: i+1,
