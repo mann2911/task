@@ -45,6 +45,7 @@ const Disperse=(props) => {
             }
         }
         if(errorData.length>0) {
+            setFlag(false)
             setError(errorData);
             return;
         }
@@ -98,7 +99,7 @@ const Disperse=(props) => {
         setData(arrData)
         let ans="";
         for(let i=0;i<arrData.length;i++) {
-            ans=ans+arrData[i]+"\n";
+            ans=ans+`${i+1}|${arrData[i]} \n`;
         }
         setTextValue(ans)
         setError([])
@@ -126,7 +127,7 @@ const Disperse=(props) => {
         setCombineBalance(true);
         let ans="";
         for(let i=0;i<arrData.length;i++) {
-            ans=ans+arrData[i]+"\n";
+            ans=ans+`${i+1}|${arrData[i]} \n`;
         }
         setTextValue(ans)
         setError([])
